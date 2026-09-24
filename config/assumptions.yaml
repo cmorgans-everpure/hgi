@@ -1,0 +1,96 @@
+# ---------------------------------------------------------------------------
+# Modelling assumptions. EVERY value here is a DEFAULT to be calibrated.
+# Company-specific evidence found by the agents always overrides these.
+# IDC CSV pricing overrides the $/TB defaults when a match is found.
+# ---------------------------------------------------------------------------
+model_year: 2026
+
+tiers:            # canonical tiers used everywhere in the model
+  performance:    {label: "Tier 0/1 - Performance (AFA / NVMe)"}
+  general:        {label: "Tier 2 - General purpose (AFA-QLC / hybrid)"}
+  capacity:       {label: "Tier 3 - Capacity (HDD / object / scale-out NAS)"}
+  archive:        {label: "Tier 4 - Archive (tape / cold object)"}
+  cloud:          {label: "Public cloud storage (block/file/object)"}
+
+default_tier_mix: {performance: 0.25, general: 0.30, capacity: 0.25, archive: 0.05, cloud: 0.15}
+
+# On-prem acquisition street price, USD per usable TB (fallback if no IDC row).
+usd_per_tb:       {performance: 1100, general: 550, capacity: 160, archive: 25}
+# Cloud list-ish blended price, USD per GB-month.
+cloud_usd_per_gb_month: 0.035
+
+refresh_years: 5                  # depreciation / refresh cycle
+support_pct_of_acquisition: 0.15  # annual maintenance & support
+# Power draw, watts per usable TB (system level incl. controllers). Override per vendor below.
+watts_per_tb:     {performance: 2.5, general: 3.0, capacity: 3.5, archive: 0.2}
+vendor_watts_per_tb: {}           # e.g. {"Pure Storage": {performance: 1.3}}
+pue: 1.55                         # facility PUE (cooling+overhead = PUE-1)
+usd_per_kwh: 0.12
+region_usd_per_kwh: {US: 0.12, EU: 0.22, UK: 0.25, APAC: 0.14}
+tb_per_admin_fte: 3000
+admin_fte_loaded_cost: 165000
+
+# Top-down: IT spend as % of revenue, storage as % of IT spend.
+it_pct_revenue:
+  financial_services: 0.075
+  insurance: 0.040
+  healthcare: 0.040
+  life_sciences: 0.045
+  technology: 0.070
+  telecom: 0.045
+  media: 0.045
+  retail: 0.020
+  manufacturing: 0.020
+  energy_utilities: 0.020
+  public_sector: 0.050
+  education: 0.040
+  transportation: 0.025
+  default: 0.035
+storage_pct_it_spend: {low: 0.03, mid: 0.045, high: 0.06}
+
+# Capacity heuristic when no disclosed capacity: usable TB per employee.
+tb_per_employee:
+  financial_services: 4.0
+  insurance: 3.0
+  healthcare: 3.0
+  life_sciences: 6.0
+  technology: 8.0
+  telecom: 5.0
+  media: 10.0
+  retail: 1.5
+  manufacturing: 1.5
+  energy_utilities: 2.5
+  public_sector: 2.0
+  education: 2.0
+  transportation: 1.5
+  default: 2.0
+
+# Capacity from disclosed data-center energy (ESG reports).
+storage_share_of_it_energy: 0.15
+
+# Triangulation weights by method (renormalised over the methods available).
+method_weights: {top_down: 0.35, bottom_up_disclosed: 0.50, bottom_up_heuristic: 0.20, energy_derived: 0.35}
+
+# ---------------- current-state baseline (value-prop inputs) ----------------
+baseline_years: 5
+# Capacity profile of the INCUMBENT environment. 'Usable TB' in this model = provisioned usable capacity.
+#   stored data (effective) = usable x utilization x DRR ;  raw = usable / usable_pct
+protocol_mix: {block: 0.45, file: 0.40, object: 0.15}   # split of on-prem usable capacity
+incumbent_drr: {block: 2.5, file: 1.8, object: 1.2}     # data-reduction ratio (vendor datasheet / Pure1 / customer)
+usable_pct: 0.75
+utilization_pct: 0.70
+data_growth_pct: 0.20          # annual growth applied to capacity-driven current-state costs
+# Density for data-centre space: usable TB per rack unit, per tier (override via incumbent_tb_per_ru evidence).
+tb_per_ru: {performance: 60, general: 120, capacity: 200, archive: 800}
+rack_overhead_ru_per_rack: 4   # switches/PDUs per 42U rack
+colocation_usd_per_ru_month: {US: 45, EU: 50, UK: 55, APAC: 40}
+# Networking: storage data + management switches per site, repurchased every refresh.
+switches_per_site: {data: 2, management: 2}
+switch_price_usd: {data: 32000, management: 6000}
+switch_support_pct: 0.10
+# Finance / ESG
+wacc_pct: {default: 0.085, financial_services: 0.09, technology: 0.095, energy_utilities: 0.07, public_sector: 0.05}
+grid_kgco2e_per_kwh: {US: 0.37, EU: 0.24, UK: 0.21, APAC: 0.55}
+
+reconciliation:
+  variance_flag_pct: 0.25   # flag if |ours - reference| / reference exceeds this

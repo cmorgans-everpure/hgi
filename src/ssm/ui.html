@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Storage Spend Modeler</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#16202e;--mute:#5d6878;--line:#e3e6eb;--acc:#fa4d16;--acc2:#1f2a44;
+--ok:#1a7f4b;--okb:#e5f5ec;--warn:#9a5b00;--warnb:#fff3dc;--bad:#b42318;--badb:#fdecea;--chip:#eef1f5}
+@media (prefers-color-scheme:dark){:root{--bg:#0f141b;--card:#171e28;--ink:#e8edf3;--mute:#98a3b3;--line:#2a3441;--acc2:#8fb3ff;
+--okb:#12301f;--warnb:#3a2a0c;--badb:#3b1512;--chip:#222c38;--ok:#5fd394;--warn:#f0b659;--bad:#ff8a80}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+header{background:var(--acc2);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+@media (prefers-color-scheme:dark){header{background:#1b2536}}
+header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.2px}header h1 span{color:var(--acc)}
+.wrap{max-width:1320px;margin:0 auto;padding:18px 16px 60px}
+form{display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex:1}
+input[type=text]{padding:8px 10px;border-radius:7px;border:1px solid #3a4763;background:#fff;color:#16202e;font-size:14px;min-width:0}
+#company{flex:1 1 220px}#ticker{width:90px}#domain{width:170px}
+button{padding:8px 14px;border-radius:7px;border:0;background:var(--acc);color:#fff;font-weight:600;cursor:pointer;font-size:14px}
+button.ghost{background:transparent;border:1px solid rgba(255,255,255,.45);color:#fff}
+button.sm{padding:5px 10px;font-size:12.5px;background:var(--chip);color:var(--ink);border:1px solid var(--line)}
+button:disabled{opacity:.5;cursor:default}
+label.cb{color:#dfe6f3;font-size:12.5px;display:flex;gap:5px;align-items:center}
+select{padding:7px;border-radius:7px;border:1px solid #3a4763;font-size:13px;max-width:220px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--mute);margin:0 0 12px;font-weight:650}
+.grid{display:grid;gap:14px}.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:14px}
+.kpi .v{font-size:24px;font-weight:700;letter-spacing:-.3px}.kpi .s{color:var(--mute);font-size:12.5px;margin-top:2px}
+.kpi.hero{border-top:3px solid var(--acc)}
+.g3{grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-bottom:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(460px,1fr));margin-bottom:14px}
+@media (max-width:560px){.g2{grid-template-columns:1fr}}
+.chartbox{position:relative;height:250px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--mute);font-weight:600;font-size:12px;white-space:nowrap}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.chip{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11.5px;font-weight:600;background:var(--chip);white-space:nowrap}
+.ok{background:var(--okb);color:var(--ok)}.warn{background:var(--warnb);color:var(--warn)}.bad{background:var(--badb);color:var(--bad)}
+.t1{background:var(--okb);color:var(--ok)}.t2{background:#e6efff;color:#2352b8}.t3{background:var(--warnb);color:var(--warn)}.t4{background:var(--badb);color:var(--bad)}
+@media (prefers-color-scheme:dark){.t2{background:#1a2a4a;color:#8fb3ff}}
+a{color:var(--acc2)}td a{word-break:break-all}
+#log{max-height:260px;overflow:auto;font:12px/1.5 ui-monospace,Menlo,monospace;color:var(--mute)}
+#log div.sub{padding-left:14px}#log div.err{color:var(--bad)}#log div.hi{color:var(--ink);font-weight:600}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.muted{color:var(--mute)}
+.notes{white-space:pre-wrap;font-size:14px}
+.empty{padding:60px 20px;text-align:center;color:var(--mute)}
+.spin{width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;display:inline-block;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.filters{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.filters select,.filters input{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:5px 8px;border-radius:6px;font-size:12.5px}
+.banner{background:var(--warnb);color:var(--warn);padding:8px 12px;border-radius:8px;margin-bottom:14px;font-weight:600;display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Storage Spend <span>Modeler</span></h1>
+  <form id="f">
+    <input type="text" id="company" placeholder="Company name (e.g. Acme Financial)" required>
+    <input type="text" id="ticker" placeholder="Ticker">
+    <input type="text" id="domain" placeholder="Domain (optional)">
+    <label class="cb"><input type="checkbox" id="samples"> use SAMPLE CSVs</label>
+    <button id="go" type="submit">Research &amp; model</button>
+    <button class="ghost" type="button" id="demo">Demo</button>
+    <select id="hist"><option value="">Past runs…</option></select>
+  </form>
+</header>
+
+<div class="wrap">
+  <div class="banner" id="banner"></div>
+  <div class="grid g2">
+    <div class="card"><h2>Research progress <span id="spin"></span></h2>
+      <div class="row muted" style="margin-bottom:8px"><span>Evidence: <b id="evn">0</b></span><span>Verified: <b id="evv">0</b></span><span id="stat"></span></div>
+      <div id="log"><div>Enter a company to start, or press Demo to see the app with fictional data.</div></div>
+    </div>
+    <div class="card"><h2>Reference data (verification sources)</h2>
+      <table><tr><th>Source</th><th>Loaded files</th><th></th></tr>
+        <tr><td>HGI spend export</td><td id="dhgi" class="muted">–</td><td><button class="sm" data-up="hgi">Upload CSV</button></td></tr>
+        <tr><td>IDC pricing</td><td id="didc" class="muted">–</td><td><button class="sm" data-up="idc">Upload CSV</button></td></tr>
+      </table>
+      <p class="muted" style="font-size:12.5px;margin:10px 0 0">The research agents never see HGI data, so the estimate stays independent. HGI and IDC are compared only in the reconciliation step. IDC $/TB is used for pricing when a row matches. Files starting with SAMPLE are ignored unless the checkbox is ticked.</p>
+      <input type="file" id="file" accept=".csv" hidden>
+    </div>
+  </div>
+
+  <div id="results"><div class="card empty">Results appear here: spend estimate, cost breakdown, tiers, power &amp; cooling, environment, reconciliation and every cited source.</div></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const usd=v=>v==null||isNaN(v)?'–':(Math.abs(v)>=1e9?'$'+(v/1e9).toFixed(2)+'B':Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'M':Math.abs(v)>=1e3?'$'+(v/1e3).toFixed(0)+'K':'$'+Math.round(v));
+const num=v=>v==null||isNaN(v)?'–':Math.round(v).toLocaleString();
+const pct=v=>v==null?'–':(v*100).toFixed(1)+'%';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tb=v=>v==null?'–':(v>=1000?(v/1000).toFixed(1)+' PB':num(v)+' TB');
+let charts=[],evCount=0,verCount=0;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const PAL=['#fa4d16','#1f2a44','#3a7bd5','#2bb673','#f5a524','#8e6cf0','#9aa5b1'];
+
+function log(msg,cls=''){const d=document.createElement('div');d.className=cls;d.textContent=msg;$('#log').appendChild(d);$('#log').scrollTop=1e9}
+async function loadDatasets(){const d=await (await fetch('/api/datasets')).json();
+  $('#dhgi').textContent=d.hgi.join(', ')||'none';$('#didc').textContent=d.idc.join(', ')||'none'}
+async function loadHist(){const h=await (await fetch('/api/history')).json();
+  $('#hist').innerHTML='<option value="">Past runs…</option>'+h.map(x=>`<option>${esc(x)}</option>`).join('')}
+document.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{$('#file').dataset.kind=b.dataset.up;$('#file').click()});
+$('#file').onchange=async e=>{const f=e.target.files[0];if(!f)return;const fd=new FormData();fd.append('file',f);
+  const r=await fetch('/api/upload/'+e.target.dataset.kind,{method:'POST',body:fd});if(!r.ok)alert(await r.text());loadDatasets();e.target.value=''};
+$('#hist').onchange=async e=>{if(!e.target.value)return;render(await (await fetch('/api/result/'+encodeURIComponent(e.target.value))).json())};
+
+async function start(demo){
+  const company=$('#company').value.trim()||(demo?'Example Corp':'');if(!company)return;
+  $('#log').innerHTML='';evCount=verCount=0;$('#evn').textContent=0;$('#evv').textContent=0;
+  $('#banner').style.display=demo?'block':'none';$('#banner').textContent='Demo mode: fictional data run through the real model engine. No web research.';
+  $('#go').disabled=$('#demo').disabled=true;$('#spin').innerHTML='<span class="spin"></span>';
+  const r=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({company,ticker:$('#ticker').value.trim(),domain:$('#domain').value.trim(),include_samples:$('#samples').checked,demo})});
+  if(!r.ok){log((await r.json()).detail||'failed','err');done();return}
+  const {run_id}=await r.json();const es=new EventSource('/api/stream/'+run_id);
+  es.onmessage=m=>{const e=JSON.parse(m.data);
+    if(e.type==='step')log((e.sub?'↳ ':'')+e.message,e.sub?'sub':'');
+    else if(e.type==='status')log(e.message,'hi');
+    else if(e.type==='profile')log(`Profile: ${e.profile.name} · ${e.profile.industry} · ${e.profile.region}`,'hi');
+    else if(e.type==='evidence'){$('#evn').textContent=++evCount;if(e.evidence.verified){$('#evv').textContent=++verCount}}
+    else if(e.type==='verified'){if(e.ok)$('#evv').textContent=++verCount}
+    else if(e.type==='model')$('#stat').textContent='Draft estimate: '+usd(e.estimates.annual_storage_spend);
+    else if(e.type==='error'){log('ERROR '+e.message,'err');console.error(e.trace)}
+    else if(e.type==='done'){render(e.result);loadHist()}};
+  es.addEventListener('end',()=>{es.close();done()});
+}
+function done(){$('#go').disabled=$('#demo').disabled=false;$('#spin').innerHTML=''}
+$('#f').onsubmit=e=>{e.preventDefault();start(false)};$('#demo').onclick=()=>start(true);
+
+function statusChip(s){const c={ALIGNED:'ok','OURS HIGHER':'warn','OURS LOWER':'warn',MISMATCH:'bad'}[s]||'';return `<span class="chip ${c}">${esc(s)}</span>`}
+function tierChip(t){return `<span class="chip t${t}">T${t}</span>`}
+function verChip(v,n){return v===true?'<span class="chip ok">verified</span>':v===false?`<span class="chip bad" title="${esc(n)}">quote not found</span>`:(n?`<span class="chip" title="${esc(n)}">unreachable</span>`:'<span class="chip">unchecked</span>')}
+
+function render(R){
+  charts.forEach(c=>c.destroy());charts=[];
+  const M=R.model,E=M.estimates,C=M.capacity,B=M.breakdown,P=M.power_cooling,RC=R.reconciliation,ev=R.evidence||[];
+  const BL=M.baseline,FE=M.finance_esg,CP=M.capacity_profile,RD=M.readiness||[];
+  const hgiChk=RC.checks.find(c=>c.check.startsWith('Total'));
+  const tiers=['performance','general','capacity','archive'];
+  const tierTot=t=>{const l=M.tier_lines[t];return l.hardware_annual+l.support_annual+l.power_usd+l.cooling_usd};
+  $('#results').innerHTML=`
+  <div class="row" style="justify-content:space-between;margin-bottom:12px">
+    <div><div style="font-size:20px;font-weight:700">${esc(M.company.name)}</div>
+    <div class="muted">${esc(M.industry_used.replace('_',' '))} · ${esc(M.company.region)}${M.company.ticker?' · '+esc(M.company.ticker):''}${M.company.domain?' · '+esc(M.company.domain):''} · revenue ${usd(M.inputs.revenue_usd)} · ${num(M.inputs.employees)} employees</div></div>
+    <div class="row">${R.files?`<a href="/api/files/${encodeURIComponent(R.files.xlsx)}"><button class="sm">Download Excel model</button></a><a href="/api/files/${encodeURIComponent(R.files.json)}"><button class="sm">Download JSON</button></a>`:''}</div>
+  </div>
+  <div class="grid kpis">
+    <div class="card kpi hero"><h2>Annual storage spend</h2><div class="v">${usd(E.annual_storage_spend)}</div><div class="s">range ${usd(E.range[0])} – ${usd(E.range[1])}</div></div>
+    <div class="card kpi"><h2>Confidence</h2><div class="v">${E.confidence}<span style="font-size:14px;color:var(--mute)">/100</span></div><div class="s">${Object.keys(E.methods_used).join(' + ')||'no methods'}</div></div>
+    <div class="card kpi"><h2>Usable capacity</h2><div class="v">${tb(C.total_tb)}</div><div class="s">basis: ${esc(C.basis)}</div></div>
+    <div class="card kpi"><h2>Primary vendor</h2><div class="v" style="font-size:19px">${esc(M.environment.primary_vendor||'Unknown')}</div><div class="s">${M.environment.vendors_ranked.length} vendors identified</div></div>
+    <div class="card kpi"><h2>Power + cooling / yr</h2><div class="v">${usd(P.power_usd+P.cooling_usd)}</div><div class="s">PUE ${(+P.pue).toFixed(2)} · $${(+P.usd_per_kwh).toFixed(3)}/kWh</div></div>
+    <div class="card kpi"><h2>vs HGI</h2><div class="v">${hgiChk&&hgiChk.variance_pct!=null?(hgiChk.variance_pct>0?'+':'')+pct(hgiChk.variance_pct):'–'}</div><div class="s">${hgiChk&&hgiChk.reference?'HGI '+usd(hgiChk.reference):'no HGI data'} · ${RC.flag_count} flags</div></div>
+    <div class="card kpi"><h2>${BL.years}-yr current state</h2><div class="v">${usd(BL.total)}</div><div class="s">NPV ${usd(BL.npv)} @ ${pct(FE.wacc_pct)} WACC</div></div>
+    <div class="card kpi"><h2>Value-prop readiness</h2><div class="v">${RD.filter(r=>r.status.startsWith('found')).length}/${RD.length}</div><div class="s">${RD.filter(r=>r.critical&&!r.status.startsWith('found')).length} critical inputs to confirm</div></div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h2>Cost breakdown (bottom-up)</h2><div class="chartbox"><canvas id="c1"></canvas></div></div>
+    <div class="card"><h2>Annual spend by tier</h2><div class="chartbox"><canvas id="c2"></canvas></div></div>
+    <div class="card"><h2>Estimate by method vs HGI</h2><div class="chartbox"><canvas id="c3"></canvas></div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h2>Storage tiers</h2><div class="scroll"><table>
+      <tr><th>Tier</th><th class="n">Capacity</th><th class="n">Mix</th><th class="n">$/TB</th><th class="n">W/TB</th><th class="n">Annual $</th><th>Price basis</th></tr>
+      ${tiers.map(t=>{const l=M.tier_lines[t];return `<tr><td>${t}</td><td class="n">${tb(l.tb)}</td><td class="n">${pct(C.mix[t])}</td><td class="n">${usd(l.usd_per_tb)}</td><td class="n">${(+l.watts_per_tb).toFixed(1)}</td><td class="n">${usd(tierTot(t))}</td><td class="muted" style="font-size:12px">${esc(M.pricing.basis[t])}</td></tr>`}).join('')}
+      <tr><td>cloud</td><td class="n">${tb(C.by_tier.cloud)}</td><td class="n">${pct(C.mix.cloud)}</td><td class="n">–</td><td class="n">–</td><td class="n">${usd(B.cloud_storage)}</td><td class="muted" style="font-size:12px">${M.inputs.cloud_spend_disclosed?'disclosed':'modelled $/GB-mo'}</td></tr>
+    </table></div>
+    <p class="muted" style="font-size:12.5px;margin:8px 0 0">Capacity methods: ${Object.entries(C.methods).map(([k,v])=>`${k} ${tb(v)}`).join(' · ')||'none'}</p></div>
+    <div class="card"><h2>Power &amp; cooling</h2><table>
+      <tr><td>Storage IT energy</td><td class="n">${num(P.it_kwh_year/1000)} MWh/yr</td></tr>
+      <tr><td>Facility energy incl. cooling (× PUE)</td><td class="n">${num(P.facility_kwh_year/1000)} MWh/yr</td></tr>
+      <tr><td>Power cost</td><td class="n">${usd(P.power_usd)}</td></tr>
+      <tr><td>Cooling &amp; facility overhead (PUE − 1)</td><td class="n">${usd(P.cooling_usd)}</td></tr>
+      <tr><td>PUE / electricity price</td><td class="n">${(+P.pue).toFixed(2)} / $${(+P.usd_per_kwh).toFixed(3)} per kWh</td></tr>
+      <tr><td class="muted">Source of PUE, price</td><td class="n muted">${esc(M.provenance.pue||'')} · ${esc(M.provenance.usd_per_kwh||'')}</td></tr>
+    </table></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h2>Environment</h2><div class="scroll"><table><tr><th>Attribute</th><th>Value</th><th>Tier</th><th>Trust</th><th></th></tr>
+      ${M.environment.items.map(i=>`<tr><td>${esc(i.field.replace(/_/g,' '))}</td><td>${esc(i.value)}</td><td>${esc(i.tier||'')}</td><td>${tierChip(i.trust_tier)}</td><td>${verChip(i.verified)} <a href="${esc(i.source)}" target="_blank">src</a></td></tr>`).join('')||'<tr><td colspan=5 class="muted">No environment evidence found</td></tr>'}
+    </table></div></div>
+    <div class="card"><h2>Reconciliation vs HGI &amp; IDC <span class="muted" style="text-transform:none;letter-spacing:0">(±${pct(RC.threshold)})</span></h2><div class="scroll"><table>
+      <tr><th>Check</th><th class="n">Ours</th><th class="n">Reference</th><th class="n">Var.</th><th>Status</th></tr>
+      ${RC.checks.map(c=>`<tr title="${esc(c.note)}"><td>${esc(c.check)}<div class="muted" style="font-size:11.5px">${esc(c.source)}</div></td><td class="n">${typeof c.ours==='number'?usd(c.ours):esc(c.ours??'–')}</td><td class="n">${typeof c.reference==='number'?usd(c.reference):esc(c.reference??'–')}</td><td class="n">${c.variance_pct==null?'–':pct(c.variance_pct)}</td><td>${statusChip(c.status)}</td></tr>`).join('')}
+    </table></div>
+    <table style="margin-top:10px"><tr><td>Confirmed by HGI</td><td>${esc(RC.vendors.confirmed_by_hgi.join(', ')||'–')}</td></tr>
+      <tr><td>Found only by research</td><td>${esc(RC.vendors.found_only_by_research.join(', ')||'–')}</td></tr>
+      <tr><td>Only in HGI</td><td>${esc(RC.vendors.only_in_hgi.join(', ')||'–')}</td></tr></table></div>
+  </div>
+  <div class="card" style="margin-bottom:14px"><h2>Current-state baseline — ${BL.years}-year cost of ownership (incumbent)</h2><div class="scroll"><table>
+    <tr><th>Category</th>${BL.totals_by_year.map((_,i)=>`<th class="n">Year ${i+1}</th>`).join('')}<th class="n">${BL.years}-yr total</th></tr>
+    ${Object.entries(BL.rows).map(([k,v])=>`<tr><td>${esc(k)}</td>${v.map(x=>`<td class="n">${usd(x)}</td>`).join('')}<td class="n"><b>${usd(v.reduce((a,b)=>a+b,0))}</b></td></tr>`).join('')}
+    <tr><td><b>Total current state</b></td>${BL.totals_by_year.map(x=>`<td class="n"><b>${usd(x)}</b></td>`).join('')}<td class="n"><b>${usd(BL.total)}</b></td></tr>
+  </table></div>
+  <div class="row muted" style="font-size:12.5px;margin-top:8px"><span>Capacity-driven lines grow ${pct(BL.growth_pct)}/yr (${esc(M.provenance.data_growth_pct||'')})</span><span>· Space: ${num(M.space.rack_units)} RU @ ${usd(M.space.usd_per_ru_month)}/RU/mo</span><span>· Networking: ${num(M.networking.switches)} switches, ${M.networking.sites} site(s)</span><span>· Storage emissions ≈ ${num(FE.storage_tco2e_year)} tCO₂e/yr${FE.company_scope2_tco2e?` (company Scope 2: ${num(FE.company_scope2_tco2e)})`:''}</span></div></div>
+  <div class="grid g2">
+    <div class="card"><h2>Capacity profile (incumbent)</h2><div class="scroll"><table>
+      <tr><th>Protocol</th><th class="n">Raw</th><th class="n">Usable</th><th class="n">DRR</th><th class="n">Stored (effective)</th></tr>
+      ${Object.entries(CP.by_protocol).map(([k,v])=>`<tr><td>${k}</td><td class="n">${tb(v.raw_tb)}</td><td class="n">${tb(v.usable_tb)}</td><td class="n">${(+v.drr).toFixed(2)}:1</td><td class="n">${tb(v.stored_effective_tb)}</td></tr>`).join('')}
+    </table></div><p class="muted" style="font-size:12.5px;margin:8px 0 0">Usable ${pct(CP.usable_pct)} of raw · utilisation ${pct(CP.utilization_pct)} · DRR basis: ${esc(M.provenance.data_reduction_ratio||'')}</p>
+    <h2 style="margin-top:16px">Refresh timing</h2><div class="scroll"><table><tr><th>System</th><th class="n">Installed</th><th class="n">Age</th><th class="n">Refresh due</th><th>Status</th></tr>
+      ${M.refresh.map(r=>`<tr><td>${esc(r.system)}</td><td class="n">${r.install_year??'–'}</td><td class="n">${r.age_years??'–'}</td><td class="n">${esc(r.refresh_due??'–')}</td><td><span class="chip ${/OVERDUE/.test(r.status)?'bad':/DUE/.test(r.status)?'warn':''}">${esc(r.status)}</span></td></tr>`).join('')||'<tr><td colspan=5 class="muted">No install dates found — ask the customer</td></tr>'}
+    </table></div></div>
+    <div class="card"><h2>Narrative hooks</h2>
+      ${[['business_priority','Strategic priorities'],['ai_initiative','AI initiatives'],['it_pain_point','Stated IT pain points'],['storage_initiative','Storage / DC initiatives'],['sustainability_target','Sustainability targets']].map(([k,l])=>`<div style="margin-bottom:10px"><div style="font-weight:600;font-size:13px">${l}</div>${(M.narrative[k]||[]).map(i=>`<div style="font-size:13px">• ${esc(i.value)} ${tierChip(i.trust_tier)} <a href="${esc(i.source)}" target="_blank">src</a></div>`).join('')||'<div class="muted" style="font-size:13px">none found</div>'}</div>`).join('')}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:14px"><h2>Value-prop readiness — current-state inputs</h2><div class="scroll"><table>
+    <tr><th>Input</th><th>Status</th><th>Detail / value used</th></tr>
+    ${RD.map(r=>`<tr><td>${esc(r.input)}${r.critical?' <span class="chip">critical</span>':''}</td><td><span class="chip ${r.status.startsWith('found (v')?'ok':r.status.startsWith('found')?'t2':r.status==='assumed'?'warn':'bad'}">${esc(r.status)}</span></td><td class="muted">${esc(r.detail)}</td></tr>`).join('')}
+  </table></div></div>
+  ${R.notes?`<div class="card" style="margin-bottom:14px"><h2>Analyst notes</h2><div class="notes">${esc(R.notes)}</div></div>`:''}
+  <div class="card"><h2>Evidence &amp; sources (${ev.length})</h2>
+    <div class="filters"><select id="ff"><option value="">All fields</option>${[...new Set(ev.map(e=>e.field))].map(f=>`<option>${esc(f)}</option>`).join('')}</select>
+    <select id="ft"><option value="">All trust tiers</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+    <select id="fv"><option value="">Any verification</option><option value="true">Verified</option><option value="false">Not found</option></select>
+    <input id="fq" placeholder="Search text…"></div>
+    <div class="scroll"><table id="evt"></table></div></div>`;
+  const drawEv=()=>{const f=$('#ff').value,t=$('#ft').value,v=$('#fv').value,q=$('#fq').value.toLowerCase();
+    const rows=ev.filter(e=>(!f||e.field===f)&&(!t||String(e.trust_tier)===t)&&(!v||String(e.verified)===v)&&(!q||JSON.stringify(e).toLowerCase().includes(q)));
+    $('#evt').innerHTML='<tr><th>ID</th><th>Field</th><th>Value</th><th>Trust</th><th>Check</th><th>Quote</th><th>Source</th><th>Date</th></tr>'+rows.map(e=>`<tr><td>${e.id}</td><td>${esc(e.field)}</td><td>${esc(e.value)}</td><td>${tierChip(e.trust_tier)}</td><td>${verChip(e.verified,e.verification_note)}</td><td style="max-width:380px">“${esc(e.quote)}”</td><td><a href="${esc(e.source_url)}" target="_blank">${esc(e.source_title||e.source_type)}</a></td><td>${esc(e.published_date||'')}</td></tr>`).join('')};
+  ['#ff','#ft','#fv','#fq'].forEach(s=>$(s).oninput=drawEv);drawEv();
+
+  const ink=css('--ink'),mute=css('--mute'),line=css('--line');
+  Chart.defaults.color=mute;Chart.defaults.borderColor=line;Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
+  const lab={hardware_annualized:'Hardware (annualized)',maintenance_support:'Maint. & support',power:'Power',cooling_facility:'Cooling & facility',cloud_storage:'Cloud storage',admin_labor:'Admin labor',data_center_space:'DC space',networking:'Networking'};
+  const fmtTip={callbacks:{label:c=>' '+c.label+': '+usd(c.raw)}};
+  charts.push(new Chart($('#c1'),{type:'doughnut',data:{labels:Object.keys(B).map(k=>lab[k]),datasets:[{data:Object.values(B),backgroundColor:PAL,borderWidth:0}]},
+    options:{maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right',labels:{boxWidth:10}},tooltip:fmtTip}}}));
+  charts.push(new Chart($('#c2'),{type:'bar',data:{labels:[...tiers,'cloud'],datasets:[{data:[...tiers.map(tierTot),B.cloud_storage],backgroundColor:PAL[0],borderRadius:4}]},
+    options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+usd(c.raw)}}},scales:{y:{ticks:{callback:v=>usd(v)}}}}}));
+  const ml=[],mv=[],mc=[];
+  if(E.bottom_up!=null){ml.push('Bottom-up');mv.push(E.bottom_up);mc.push(PAL[2])}
+  if(E.top_down){ml.push('Top-down low','Top-down mid','Top-down high');mv.push(E.top_down.low,E.top_down.mid,E.top_down.high);mc.push('#9fb6d9',PAL[2],'#9fb6d9')}
+  if(E.disclosed_spend){ml.push('Disclosed');mv.push(E.disclosed_spend);mc.push(PAL[3])}
+  ml.push('Triangulated');mv.push(E.annual_storage_spend);mc.push(PAL[0]);
+  if(hgiChk&&hgiChk.reference){ml.push('HGI');mv.push(hgiChk.reference);mc.push(PAL[1])}
+  charts.push(new Chart($('#c3'),{type:'bar',data:{labels:ml,datasets:[{data:mv,backgroundColor:mc,borderRadius:4}]},
+    options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+usd(c.raw)}}},scales:{x:{ticks:{callback:v=>usd(v)}}}}}));
+}
+loadDatasets();loadHist();
+</script>
+</body>
+</html>

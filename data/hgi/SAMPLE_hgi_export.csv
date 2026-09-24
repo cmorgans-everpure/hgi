@@ -1,0 +1,6 @@
+Company Name,Domain,Category,Vendor,Product,Spend Estimate (USD),Intensity,Last Verified
+Example Corp,example.com,Enterprise Storage,Dell Technologies,PowerMax,4200000,High,2026-06-30
+Example Corp,example.com,Enterprise Storage,NetApp,AFF A-Series,2600000,Medium,2026-05-12
+Example Corp,example.com,Backup & Recovery,Veeam,Veeam Backup & Replication,800000,Medium,2026-04-02
+Example Corp,example.com,Cloud Storage,Amazon Web Services,Amazon S3,1900000,High,2026-07-15
+Example Corp,example.com,Networking,Cisco,Nexus,3100000,High,2026-03-01

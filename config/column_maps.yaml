@@ -1,0 +1,27 @@
+# Map YOUR CSV headers (right) to the canonical names (left). Edit to match exports.
+hgi:
+  company: ["Company Name", "Company", "Account Name"]
+  domain: ["Domain", "Website", "URL"]
+  category: ["Category", "Product Category", "Technology Category"]
+  vendor: ["Vendor", "Vendor Name", "Manufacturer"]
+  product: ["Product", "Product Name", "Technology"]
+  spend_usd: ["Spend Estimate (USD)", "Spend", "IT Spend", "Estimated Spend", "Storage Spend"]
+  intensity: ["Intensity", "Intensity Score"]
+  last_verified: ["Last Verified", "Date Last Verified", "Last Seen"]
+idc:
+  vendor: ["Vendor", "Company"]
+  model: ["Model", "Product", "Product Family"]
+  segment: ["Segment", "Price Band", "Market Segment"]
+  media: ["Media Type", "Media", "Array Type"]
+  usd_per_tb: ["Avg $/TB (Effective)", "Avg $/TB", "$/TB", "Price per TB", "ASP per TB"]
+  usd_per_tb_raw: ["Avg $/TB (Raw)", "Raw $/TB"]
+  period: ["Quarter", "Period", "Date"]
+# Map IDC segment / media keywords to model tiers (first match wins, lowercase contains).
+idc_tier_rules:
+  - {contains: ["tape"], tier: archive}
+  - {contains: ["qlc", "hybrid", "hfa"], tier: general}
+  - {contains: ["all flash", "afa", "nvme", "high-end", "high end", "tier 0", "tier 1"], tier: performance}
+  - {contains: ["midrange", "mid-range"], tier: general}
+  - {contains: ["hdd", "entry", "object", "capacity", "scale-out", "archive"], tier: capacity}
+# HGI categories counted as storage spend (lowercase contains).
+hgi_storage_categories: ["storage", "backup", "data protection", "san", "nas", "object"]

@@ -1,0 +1,271 @@
+{
+ "_comment": "FICTIONAL demo data for 'Example Corp' so the UI and model can be tried offline. Not real sources.",
+ "profile": {
+  "name": "Example Corp",
+  "domain": "example.com",
+  "industry": "financial_services",
+  "region": "US",
+  "revenue_usd": 12000000000,
+  "employees": 30000,
+  "fiscal_year": "2025"
+ },
+ "evidence": [
+  {
+   "field": "revenue_usd",
+   "value": "12000000000",
+   "numeric_value": 12000000000,
+   "source_url": "https://www.sec.gov/example",
+   "source_type": "10-K",
+   "quote": "Total net revenue was $12.0 billion for fiscal 2025.",
+   "published_date": "2026-02-20",
+   "verified": true,
+   "found_by": "financial"
+  },
+  {
+   "field": "employees",
+   "value": "30000",
+   "numeric_value": 30000,
+   "source_url": "https://www.sec.gov/example",
+   "source_type": "10-K",
+   "quote": "As of December 31, 2025 we had approximately 30,000 employees.",
+   "published_date": "2026-02-20",
+   "verified": true,
+   "found_by": "financial"
+  },
+  {
+   "field": "data_center_count",
+   "value": "4 owned data centers",
+   "numeric_value": 4,
+   "source_url": "https://investor.example.com/10k",
+   "source_type": "10-K",
+   "quote": "We operate four owned data centers in the United States.",
+   "published_date": "2026-02-20",
+   "verified": true,
+   "found_by": "financial"
+  },
+  {
+   "field": "primary_storage_vendor",
+   "value": "Dell Technologies",
+   "source_url": "https://www.dell.com/en-us/case-studies/example",
+   "source_type": "vendor_case_study",
+   "quote": "Example Corp standardized its tier-one block storage on Dell PowerMax.",
+   "published_date": "2024-05-01",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "storage_model",
+   "value": "Dell PowerMax 8500",
+   "tier_hint": "performance",
+   "source_url": "https://www.dell.com/en-us/case-studies/example",
+   "source_type": "vendor_case_study",
+   "quote": "The bank deployed PowerMax 8500 arrays across two sites.",
+   "published_date": "2024-05-01",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "storage_vendor",
+   "value": "NetApp",
+   "source_url": "https://www.netapp.com/customers/example",
+   "source_type": "vendor_case_study",
+   "quote": "Example Corp uses NetApp AFF for file services supporting 20,000 users.",
+   "published_date": "2023-09-10",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "storage_vendor",
+   "value": "Dell Technologies",
+   "source_url": "https://www.dell.com/en-us/case-studies/example",
+   "source_type": "vendor_case_study",
+   "quote": "Example Corp standardized its tier-one block storage on Dell PowerMax.",
+   "published_date": "2024-05-01",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "storage_product",
+   "value": "NetApp AFF A-Series",
+   "tier_hint": "general",
+   "source_url": "https://www.netapp.com/customers/example",
+   "source_type": "vendor_case_study",
+   "quote": "Example Corp uses NetApp AFF for file services supporting 20,000 users.",
+   "published_date": "2023-09-10",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "capacity_tb_total",
+   "value": "95 PB",
+   "numeric_value": 95000,
+   "source_url": "https://www.blocksandfiles.com/example",
+   "source_type": "trade_press",
+   "quote": "Example Corp now manages roughly 95 petabytes of data across on-premises and cloud.",
+   "published_date": "2025-03-15",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "backup_vendor",
+   "value": "Veeam",
+   "source_url": "https://www.veeam.com/success-stories/example",
+   "source_type": "vendor_case_study",
+   "quote": "Example Corp protects 4,000 VMs with Veeam Backup & Replication.",
+   "published_date": "2024-11-02",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "cloud_provider",
+   "value": "Amazon Web Services",
+   "tier_hint": "cloud",
+   "source_url": "https://aws.amazon.com/solutions/case-studies/example",
+   "source_type": "cloud_case_study",
+   "quote": "Example Corp migrated its analytics data lake to Amazon S3.",
+   "published_date": "2025-06-01",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "storage_product",
+   "value": "Commvault (job posting)",
+   "source_url": "https://careers.example.com/jobs/123",
+   "source_type": "job_posting",
+   "quote": "Experience administering Commvault and Dell PowerMax required.",
+   "published_date": "2026-05-01",
+   "verified": false,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "data_center_energy_mwh",
+   "value": "61,000 MWh data centers",
+   "numeric_value": 61000,
+   "source_url": "https://sustainability.example.com/2025-report.pdf",
+   "source_type": "esg_report",
+   "quote": "Our data centers consumed 61,000 MWh of electricity in 2025.",
+   "published_date": "2026-04-10",
+   "verified": true,
+   "found_by": "sustainability"
+  },
+  {
+   "field": "pue",
+   "value": "1.45",
+   "numeric_value": 1.45,
+   "source_url": "https://sustainability.example.com/2025-report.pdf",
+   "source_type": "esg_report",
+   "quote": "The average PUE across our owned data centers was 1.45.",
+   "published_date": "2026-04-10",
+   "verified": true,
+   "found_by": "sustainability"
+  },
+  {
+   "field": "storage_install_year",
+   "value": "Dell PowerMax 8500 (primary block)",
+   "numeric_value": 2021,
+   "source_url": "https://www.dell.com/en-us/case-studies/example",
+   "source_type": "vendor_case_study",
+   "quote": "The bank completed its PowerMax deployment in 2021.",
+   "published_date": "2024-05-01",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "storage_install_year",
+   "value": "NetApp AFF (file services)",
+   "numeric_value": 2022,
+   "source_url": "https://www.netapp.com/customers/example",
+   "source_type": "vendor_case_study",
+   "quote": "In 2022 Example Corp moved its file services to NetApp AFF.",
+   "published_date": "2023-09-10",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "capacity_tb_file",
+   "value": "30 PB unstructured",
+   "numeric_value": 30000,
+   "source_url": "https://www.blocksandfiles.com/example",
+   "source_type": "trade_press",
+   "quote": "of which around 30 petabytes is unstructured file data.",
+   "published_date": "2025-03-15",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "incumbent_watts_per_tb",
+   "value": "4.1 W per usable TB (PowerMax 8500 typical)",
+   "numeric_value": 4.1,
+   "tier_hint": "performance",
+   "source_url": "https://www.dell.com/en-us/powermax/specsheet-example",
+   "source_type": "company_website",
+   "quote": "Typical power consumption 4.1 W per usable TB.",
+   "published_date": "2025-01-01",
+   "verified": true,
+   "found_by": "infrastructure"
+  },
+  {
+   "field": "wacc_pct",
+   "value": "9.2% post-tax discount rate (goodwill impairment test)",
+   "numeric_value": 0.092,
+   "source_url": "https://www.sec.gov/example",
+   "source_type": "10-K",
+   "quote": "cash flows were discounted using a post-tax rate of 9.2%.",
+   "published_date": "2026-02-20",
+   "verified": true,
+   "found_by": "financial"
+  },
+  {
+   "field": "business_priority",
+   "value": "Consolidate from four to two data centers by 2028",
+   "source_url": "https://investor.example.com/q2-2026-call",
+   "source_type": "earnings_call",
+   "quote": "we plan to consolidate from four data centers to two by 2028.",
+   "published_date": "2026-07-28",
+   "verified": true,
+   "found_by": "financial"
+  },
+  {
+   "field": "ai_initiative",
+   "value": "Building a GenAI platform for fraud detection and customer service",
+   "source_url": "https://investor.example.com/q2-2026-call",
+   "source_type": "earnings_call",
+   "quote": "we are scaling our generative AI platform across fraud detection and customer service.",
+   "published_date": "2026-07-28",
+   "verified": true,
+   "found_by": "financial"
+  },
+  {
+   "field": "it_pain_point",
+   "value": "Cyber resilience / ransomware risk cited as top risk",
+   "source_url": "https://www.sec.gov/example",
+   "source_type": "10-K",
+   "quote": "A ransomware attack could disrupt our operations and result in significant data loss.",
+   "published_date": "2026-02-20",
+   "verified": true,
+   "found_by": "financial"
+  },
+  {
+   "field": "scope2_emissions_tco2e",
+   "value": "48,000 tCO2e (market-based)",
+   "numeric_value": 48000,
+   "source_url": "https://sustainability.example.com/2025-report.pdf",
+   "source_type": "esg_report",
+   "quote": "Scope 2 market-based emissions were 48,000 tCO2e.",
+   "published_date": "2026-04-10",
+   "verified": true,
+   "found_by": "sustainability"
+  },
+  {
+   "field": "sustainability_target",
+   "value": "Net zero operations by 2030",
+   "source_url": "https://sustainability.example.com/2025-report.pdf",
+   "source_type": "esg_report",
+   "quote": "We are committed to net zero operational emissions by 2030.",
+   "published_date": "2026-04-10",
+   "verified": true,
+   "found_by": "sustainability"
+  }
+ ],
+ "notes": "DEMO (fictional data). Headline estimate is driven by disclosed ~95 PB capacity priced with IDC tier medians, blended with a top-down financial-services benchmark. Strongest evidence: filing financials, ESG energy/PUE, vendor case studies. Weakest: tier mix (default) and cloud share. Validate with customer: (1) tier-1 vs file vs archive split, (2) PowerMax refresh timing, (3) S3 monthly spend."
+}

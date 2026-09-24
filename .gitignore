@@ -1,0 +1,16 @@
+# secrets
+.env
+# local env / caches
+.venv/
+__pycache__/
+.pytest_cache/
+# generated outputs
+output/*
+!output/.gitkeep
+# licensed third-party data - never commit
+data/hgi/*.csv
+data/idc/*.csv
+!data/hgi/SAMPLE_*.csv
+!data/idc/SAMPLE_*.csv
+# macOS
+.DS_Store

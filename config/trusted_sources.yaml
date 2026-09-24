@@ -1,0 +1,28 @@
+# Source trust tiers. Tier 1 = most trusted. Evidence from 'blocked' is rejected.
+# Domains are matched as suffixes (sec.gov matches www.sec.gov).
+tier1:   # primary / regulatory / company-authored
+  weight: 1.0
+  domains: [sec.gov, edgar.sec.gov, investor., ir., annualreports.com, companieshouse.gov.uk,
+            sedarplus.ca, esma.europa.eu, cdp.net, sustainability.]
+  source_types: [annual_report, 10-K, 10-Q, 20-F, 8-K, proxy, earnings_call, esg_report, company_website]
+tier2:   # vendor-authored customer references, government procurement
+  weight: 0.8
+  domains: [purestorage.com, netapp.com, dell.com, delltechnologies.com, hpe.com, ibm.com,
+            hitachivantara.com, vastdata.com, weka.io, qumulo.com, nutanix.com, infinidat.com,
+            cohesity.com, rubrik.com, veeam.com, commvault.com, aws.amazon.com, azure.microsoft.com,
+            cloud.google.com, oracle.com, usaspending.gov, sam.gov, gov.uk, ted.europa.eu]
+  source_types: [vendor_case_study, vendor_press_release, government_contract, cloud_case_study]
+tier3:   # reputable trade/business press, job postings (tech-stack signals)
+  weight: 0.55
+  domains: [reuters.com, bloomberg.com, wsj.com, ft.com, cnbc.com, computerweekly.com,
+            theregister.com, blocksandfiles.com, datacenterdynamics.com, storagenewsletter.com,
+            techtarget.com, crn.com, networkworld.com, informationweek.com, ciodive.com,
+            linkedin.com/jobs, greenhouse.io, lever.co, myworkdayjobs.com, careers.]
+  source_types: [press, trade_press, job_posting, conference_talk]
+tier4:   # accepted only as weak corroboration, never sole source
+  weight: 0.25
+  domains: []
+  source_types: [blog, other]
+blocked:
+  domains: [reddit.com, quora.com, wikipedia.org, medium.com, facebook.com, x.com, twitter.com,
+            tiktok.com, pinterest.com]

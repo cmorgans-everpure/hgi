@@ -1,0 +1,9 @@
+Vendor,Model,Segment,Media Type,Avg $/TB (Raw),Avg $/TB (Effective),Quarter
+Dell Technologies,PowerMax,High-end,All Flash,1650,1150,2026Q2
+NetApp,AFF A-Series,Midrange,All Flash,980,690,2026Q2
+NetApp,AFF C-Series,Midrange,QLC All Flash,620,430,2026Q2
+Pure Storage,FlashArray//X,Midrange,All Flash,1010,640,2026Q2
+Pure Storage,FlashArray//E,Entry,QLC All Flash,390,260,2026Q2
+Dell Technologies,PowerScale,Midrange,Hybrid,260,210,2026Q2
+Industry,Capacity object,Entry,HDD,140,120,2026Q2
+Industry,LTO-9 Library,Entry,Tape,22,18,2026Q2

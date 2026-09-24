@@ -1,0 +1,11 @@
+services:
+  ssm:
+    build: .
+    image: storage-spend-modeler:latest
+    ports: ["127.0.0.1:8765:8765"]   # localhost only; change to "8765:8765" to share on your network
+    env_file: .env
+    volumes:
+      - ./data/hgi:/app/data/hgi      # your HGI CSVs (never committed)
+      - ./data/idc:/app/data/idc      # your IDC CSVs (never committed)
+      - ./output:/app/output          # generated models
+    restart: unless-stopped
